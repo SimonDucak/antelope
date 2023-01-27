@@ -11,13 +11,13 @@
                 <h4 class="text-body-1">{{ foundSection.name }}</h4>
 
                 <div class="d-flex">
-                    <v-text-field class="mr-2" type="date" :hide-details="true" density="compact" variant="solo" />
+                    <v-text-field :value="selectedDateValue" @update:model-value="setDate" class="mr-2" type="date"
+                        :hide-details="true" density="compact" variant="solo" />
 
                     <v-select v-model="filterType" :hide-details="true" density="compact" item-title="label"
                         item-value="value" style="max-width: 180px;" :items="[
                             { label: 'Only day', value: FilterType.ONLY_DAY },
-                            { label: 'Last 7 Days', value: FilterType.LAST_7_DAYS },
-                            { label: 'Month', value: FilterType.CURRENT_MONTH },
+                            { label: 'Month', value: FilterType.MONTH },
                         ]" variant="solo"></v-select>
                 </div>
             </n-list-item>
@@ -52,14 +52,16 @@ import { useMonthStore } from "@/store/month";
 import { AntelopeMonth } from '@/model/AntelopeMonth';
 import { useSectionStore } from "@/store/section";
 import { AntelopeSection } from "@/model/AntelopeSection";
+import { useDateInput } from "@/composable/use_date_input";
 
 const { currentRoute } = useRouter();
 const monthStore = useMonthStore();
 const sectionStore = useSectionStore();
 
-enum FilterType { ONLY_DAY, LAST_7_DAYS, CURRENT_MONTH };
+enum FilterType { ONLY_DAY, MONTH };
 
 const filterType = ref<FilterType>(FilterType.ONLY_DAY);
+const { inputValue: selectedDateValue, setDate } = useDateInput(new Date());
 
 const sectionId = computed<string>(() => {
     const sectionId = currentRoute.value?.query?.section
