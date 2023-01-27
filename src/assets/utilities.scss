@@ -1,0 +1,36 @@
+.w-min-screen {
+    min-width: 100vw;
+}
+
+.h-min-screen {
+    min-height: 100vh;
+}
+
+$border: 1px solid rgba(var(--v-border-color),var(--v-border-opacity));
+.border-l {
+    border-left: $border;
+}
+
+.border-t {
+    border-top: $border;
+}
+
+.border-r {
+    border-right: $border;
+}
+
+.border-b {
+    border-bottom: $border;
+}
+
+.border {
+    border: $border;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.overflow-auto {
+    overflow: auto;
+}
