@@ -22,6 +22,12 @@ export class AntelopeSection {
     get icon() { return this._icon; }
     set icon(value: string) { this._icon = value.trim(); }
 
+    serialize(): { [key: string]: any } {
+        return {
+
+        }
+    }
+
     constructor(id: string, ownerUid: string, name: string, createdAt: number, icon?: string) {
         this._id = id;
         this._ownerUid = ownerUid;

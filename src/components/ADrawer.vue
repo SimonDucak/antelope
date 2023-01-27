@@ -14,18 +14,18 @@
         <v-divider></v-divider>
 
         <v-list>
-            <v-list-item :active="false" prepend-icon="mdi-logout" title="Logout" value="logout">
-                <v-dialog transition="dialog-bottom-transition" v-model="modalVisible" activator="parent">
-                    <AAddSectionForm v-model:visible="modalVisible" />
-                </v-dialog>
-            </v-list-item>
+            <v-list-item @click="signOut" :active="false" prepend-icon="mdi-logout" title="Logout" value="logout" />
+
         </v-list>
 
         <v-divider></v-divider>
 
         <v-list>
-            <v-list-item @click="modalVisible = true" :active="false" prepend-icon="mdi-folder-plus" title="Add Section"
-                value="add-section"></v-list-item>
+            <v-list-item :active="false" prepend-icon="mdi-folder-plus" title="Add Section" value="add-section">
+                <v-dialog transition="dialog-bottom-transition" v-model="modalVisible" activator="parent">
+                    <AAddSectionForm v-model:visible="modalVisible" />
+                </v-dialog>
+            </v-list-item>
         </v-list>
 
         <v-divider></v-divider>
@@ -44,6 +44,9 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import AAddSectionForm from "@/components/AAddSectionForm.vue";
+import { useAuth } from "@/composable/use_auth";
+
+const { signOut } = useAuth();
 
 const modalVisible = ref<boolean>(false);
 </script>

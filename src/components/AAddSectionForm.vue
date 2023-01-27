@@ -4,7 +4,8 @@
             <v-card class="px-6 py-6 w-100">
                 <h3 class="text-h5 mb-6">Add new section</h3>
 
-                <v-text-field size="x-small" placeholder="Enter name" label="Name of section*" variant="outlined" />
+                <v-text-field size="x-small" placeholder="Gym, Learning Spanish, Work..." label="Name of section*"
+                    variant="outlined" />
 
                 <v-text-field size="x-small" placeholder="mdi-star" label="Icon of section" variant="outlined" />
 
