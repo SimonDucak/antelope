@@ -50,7 +50,7 @@ const hhmmss = computed<string>(() => {
 })
 
 const save = () => {
-    const range = new AntelopeRange('', finalStartDate.value, finalEndDate.value);
+    const range = new AntelopeRange('', '', finalStartDate.value, finalEndDate.value);
     emit('update:value', range);
     startDate.value = today;
     endDate.value = today;

@@ -5,6 +5,9 @@ export class AntelopeRange {
     private _id: string;
     get id() { return this._id; }
 
+    private _ownerUid: string;
+    get ownerUid() { return this._ownerUid; }
+
     private _startDate: number;
     set startDate(value: Date) {
         if (!isValidDate(value)) return;
@@ -23,8 +26,9 @@ export class AntelopeRange {
 
     get hhmmss() { return formatSecondsToHhmmss(this.secondsDiff); }
 
-    constructor(id: string, startDate: Date, endDate: Date) {
+    constructor(id: string, ownerUid: string, startDate: Date, endDate: Date) {
         this._id = id;
+        this._ownerUid = ownerUid;
         this._startDate = startDate.getTime();
         this._endDate = endDate.getTime();
     }
