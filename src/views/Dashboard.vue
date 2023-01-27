@@ -1,35 +1,50 @@
 <template>
   <v-layout>
-    <!-- Drawer / Navigation -->
     <ADrawer />
 
     <v-main class="d-flex w-screen overflow-hidden w-100">
-      <!-- Left side -->
-      <div class="w-50 d-flex flex-column align-center h-screen overflow-auto border-r">
-        <!-- Time Range Picker -->
-        <div class="border-b w-100 py-16 px-10 d-flex flex-column align-center justify-center"
-          style="min-height: 300px">
-          <ATimeRangePicker @update:value="ranges.push($event)" />
-        </div>
-
-        <!-- Range table -->
-        <ARangeTable v-model:ranges="(ranges as AntelopeRange[])" />
-      </div>
+      <ALogger />
 
       <!-- Right side / Charts -->
       <div class="w-50 h-screen overflow-auto"></div>
     </v-main>
+
+    <!-- Is Running -->
+    <div v-if="isRunning" class="progress-bar">
+      <v-progress-linear indeterminate color="success"></v-progress-linear>
+    </div>
   </v-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
-import ATimeRangePicker from "@/components/ATimeRangePicker.vue";
+import { ref, onMounted } from "vue"
 import { AntelopeRange } from "@/model/AntelopeRange";
-import ARangeTable from "@/components/ARangeTable.vue";
 import ADrawer from "@/components/ADrawer.vue";
-import AAddSectionModal from "@/components/AAddSectionForm.vue";
+import { useTask } from "@/composable/use_task";
+import { useSectionStore } from "@/store/section";
+import ALogger from "@/components/ALogger.vue";
+
+const sections = useSectionStore();
 
 const ranges = ref<AntelopeRange[]>([]);
-const modalVisible = ref<boolean>(false);
+
+const { perform, isRunning } = useTask(async () => {
+  try {
+    await sections.fetchCurrentUserSections();
+  } catch (err) {
+    alert(err);
+  }
+});
+
+onMounted(() => { perform(); })
 </script>
+
+<style lang="scss" scoped>
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 9999;
+}
+</style>

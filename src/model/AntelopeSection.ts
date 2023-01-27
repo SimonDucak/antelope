@@ -1,4 +1,8 @@
+import { useAuth } from '@/composable/use_auth';
+import { Deserializer } from './../utils/deserializer';
 import { isValidDate } from "@/utils/date";
+import { DocumentSnapshot } from "firebase/firestore";
+import { v1 } from 'uuid';
 
 export class AntelopeSection {
     private _id: string;
@@ -24,13 +28,33 @@ export class AntelopeSection {
 
     serialize(): { [key: string]: any } {
         return {
-
-        }
+            id: this._id,
+            createdAt: this._createdAt,
+            ownerUid: this._ownerUid,
+            name: this._name,
+            icon: this._icon,
+        };
     }
 
-    constructor(id: string, ownerUid: string, name: string, createdAt: number, icon?: string) {
-        this._id = id;
-        this._ownerUid = ownerUid;
+    static deserializeFromDocSnapshot(document: DocumentSnapshot): AntelopeSection {
+        const deserializer = new Deserializer<AntelopeSection>(document);
+        return new AntelopeSection(
+            deserializer.getField<string>('name', ''),
+            deserializer.getField<number>('createdAt', new Date().getTime()),
+            deserializer.getField<string>('icon', ''),
+            document.id
+        );
+    }
+
+    static emptySection(): AntelopeSection {
+        return new AntelopeSection('', new Date().getTime());
+    }
+
+    constructor(name: string, createdAt: number, icon?: string, id?: string) {
+        this._id = id ?? v1();
+        const { currentUser } = useAuth();
+        if (!currentUser) throw Error('User is not logged in');
+        this._ownerUid = currentUser.uid;
         this._name = name;
         this._createdAt = createdAt;
         if (icon) this._icon = icon;

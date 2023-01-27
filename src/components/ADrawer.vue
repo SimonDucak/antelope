@@ -15,7 +15,6 @@
 
         <v-list>
             <v-list-item @click="signOut" :active="false" prepend-icon="mdi-logout" title="Logout" value="logout" />
-
         </v-list>
 
         <v-divider></v-divider>
@@ -31,9 +30,9 @@
         <v-divider></v-divider>
 
         <v-list density="compact">
-            <v-list-item prepend-icon="mdi-folder" title="My Files" value="myfiles"></v-list-item>
-            <v-list-item prepend-icon="mdi-account-multiple" title="Shared with me" value="shared"></v-list-item>
-            <v-list-item prepend-icon="mdi-star" title="Starred" value="starred"></v-list-item>
+            <v-list-item v-for="section in sections.sections" :key="section.id" :prepend-icon="section.icon"
+                :active="section.id === currentRoute.query?.section" @click="openSection(section as AntelopeSection)"
+                :title="section.name" :value="section.id"></v-list-item>
         </v-list>
     </v-navigation-drawer>
 
@@ -45,12 +44,20 @@
 import { ref } from "vue"
 import AAddSectionForm from "@/components/AAddSectionForm.vue";
 import { useAuth } from "@/composable/use_auth";
+import { useSectionStore } from "@/store/section";
+import { useRouter } from "vue-router"
+import { AntelopeSection } from "@/model/AntelopeSection";
 
+const sections = useSectionStore();
 const { signOut } = useAuth();
+const { push, currentRoute } = useRouter();
 
 const modalVisible = ref<boolean>(false);
-</script>
 
+const openSection = (section: AntelopeSection) => {
+    push({ path: '/dashboard', query: { section: section.id } });
+} 
+</script>
 
 <style lang="scss">
 .v-navigation-drawer__content::-webkit-scrollbar {

@@ -11,7 +11,7 @@
             <v-text-field v-model="endTime" hide-details class="mb-0" placeholder="00:00" variant="solo"
                 type="time"></v-text-field>
         </div>
-        <p class="body-text-2">{{ hhmmss }}</p>
+        <p class="body-text-2 mb-3">{{ hhmmss }}</p>
         <v-btn color="success" @click="save">Save Time</v-btn>
     </div>
 </template>
@@ -50,7 +50,7 @@ const hhmmss = computed<string>(() => {
 })
 
 const save = () => {
-    const range = new AntelopeRange('', '', finalStartDate.value, finalEndDate.value);
+    const range = new AntelopeRange(finalStartDate.value, finalEndDate.value);
     emit('update:value', range);
     startDate.value = today;
     endDate.value = today;

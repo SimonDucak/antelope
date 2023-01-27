@@ -1,12 +1,11 @@
 import { getSecondsBetweenTwoDates, isValidDate } from "@/utils/date";
 import { formatSecondsToHhmmss } from "@/utils/number";
+import { ObjectDeserializer } from "@/utils/objectDeserializer";
+import { v1 } from "uuid";
 
 export class AntelopeRange {
     private _id: string;
     get id() { return this._id; }
-
-    private _ownerUid: string;
-    get ownerUid() { return this._ownerUid; }
 
     private _startDate: number;
     set startDate(value: Date) {
@@ -26,9 +25,29 @@ export class AntelopeRange {
 
     get hhmmss() { return formatSecondsToHhmmss(this.secondsDiff); }
 
-    constructor(id: string, ownerUid: string, startDate: Date, endDate: Date) {
-        this._id = id;
-        this._ownerUid = ownerUid;
+    serialize(): { [key: string]: any } {
+        return {
+            id: this._id,
+            startDate: this._startDate,
+            endDate: this._endDate,
+        };
+    }
+
+    static deserialize(obj: { [key: string]: any }): AntelopeRange {
+        const objectDeserializer = new ObjectDeserializer(obj);
+        return new AntelopeRange(
+            objectDeserializer.getField<Date>('startDate', new Date()),
+            objectDeserializer.getField<Date>('endDate', new Date()),
+            objectDeserializer.getField<string>('id', v1())
+        );
+    };
+
+    static emptyRange(): AntelopeRange {
+        return new AntelopeRange(new Date(), new Date());
+    }
+
+    constructor(startDate: Date, endDate: Date, id?: string) {
+        this._id = id ?? v1();
         this._startDate = startDate.getTime();
         this._endDate = endDate.getTime();
     }

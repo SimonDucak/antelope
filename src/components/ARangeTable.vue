@@ -32,7 +32,7 @@ import { getTheTrueFortmatOfDate } from "@/utils/date";
 import { PropType, ref, computed } from "vue";
 import ATableHeadSort from "@/components/ATableHeadSort.vue";
 
-const emit = defineEmits(['update:ranges']);
+const emit = defineEmits(['update:removed']);
 
 const props = defineProps({
     ranges: {
@@ -56,7 +56,7 @@ const sortType = ref<SortType>(SortType.START_DATE);
 const sortMethod = ref<SortMethod>(SortMethod.DSC);
 
 const removeRange = (range: AntelopeRange) => {
-    emit('update:ranges', props.ranges.filter((r) => r !== range));
+    emit('update:removed', range);
 }
 
 const sortAsc = (numberA: number, numberB: number): number => {
