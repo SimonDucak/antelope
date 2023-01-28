@@ -2,12 +2,15 @@
     <div class="d-flex justify-center align-center">
         <div class="w-100" style="max-width: 600px">
             <v-card class="px-6 py-6 w-100">
-                <h3 class="text-h5 mb-6">Add new section</h3>
+                <h3 class="text-h5 mb-6">
+                    <template v-if="!updateSection">Add new section</template>
+                    <template v-else>Edit {{ updateSection.name }}</template>
+                </h3>
 
-                <v-text-field class="mb-2" v-model="section.name" :rules="rules" size="x-small"
+                <v-text-field class="mb-2" v-model="section.name" :rules="rules"
                     placeholder="Gym, Learning Spanish, Work..." label="Name of section*" variant="outlined" />
 
-                <v-text-field v-model="section.icon" size="x-small" placeholder="mdi-star" label="Icon of section"
+                <v-text-field v-model="section.icon" placeholder="mdi-star" label="Icon of section"
                     variant="outlined" />
 
                 <p class="text-body-2 mb-2">
@@ -16,7 +19,10 @@
                 </p>
 
                 <v-card-actions>
-                    <v-btn @click="perform" :loading="isRunning" :disabled="invalid" color="success">Add section</v-btn>
+                    <v-btn @click="perform" :loading="isRunning" :disabled="invalid" color="success">
+                        <template v-if="!updateSection">Add section</template>
+                        <template v-else>Edit section</template>
+                    </v-btn>
                     <v-btn @click="$emit('update:visible', false)">Close</v-btn>
                 </v-card-actions>
             </v-card>
@@ -30,10 +36,14 @@ import { computed, PropType, ref } from 'vue';
 import { useSectionStore } from '@/store/section';
 import { useTask } from '@/composable/use_task';
 
-defineProps({
+const props = defineProps({
     visible: {
         required: false,
         type: Boolean as PropType<boolean>,
+    },
+    updateSection: {
+        required: false,
+        type: Object as PropType<AntelopeSection>,
     }
 });
 
@@ -47,13 +57,19 @@ const invalid = computed<boolean>(() => {
     return !section.value.name;
 });
 
-const section = ref<AntelopeSection>(AntelopeSection.emptySection());
+const section = ref<AntelopeSection>(props.updateSection ?
+    AntelopeSection.duplicateSection(props.updateSection) :
+    AntelopeSection.emptySection());
 
 const sections = useSectionStore();
 
 const { isRunning, perform } = useTask(async () => {
     try {
-        await sections.addNewSection(section.value as AntelopeSection);
+        if (props.updateSection) {
+            await sections.updateSection(section.value as AntelopeSection);
+        } else {
+            await sections.addNewSection(section.value as AntelopeSection);
+        }
         emit('update:visible', false);
     } catch (error) {
         console.error(error);

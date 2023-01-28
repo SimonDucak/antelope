@@ -32,6 +32,7 @@ const { perform, isRunning } = useTask(async () => {
   try {
     await sections.fetchCurrentUserSections();
   } catch (err) {
+    console.log(err);
     alert(err);
   }
 });

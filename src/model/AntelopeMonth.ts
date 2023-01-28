@@ -32,9 +32,8 @@ export class AntelopeMonth {
     }
 
     static getMonthId(date: Date): string {
-        const day = pad(date.getDate());
         const month = pad(date.getMonth() + 1);
-        return `${day}${month}${date.getFullYear()}`;
+        return `${month}${date.getFullYear()}`;
     }
 
     static emptyMonth(id: string): AntelopeMonth {

@@ -35,14 +35,11 @@
                 :title="section.name" :value="section.id"></v-list-item>
         </v-list>
     </v-navigation-drawer>
-
-    <!-- Add section modal -->
-    <AAddSectionModal v-modal:visible="modalVisible" />
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue"
-import AAddSectionForm from "@/components/AAddSectionForm.vue";
+import AAddSectionForm from "@/components/AUpsertSectionForm.vue";
 import { useAuth } from "@/composable/use_auth";
 import { useSectionStore } from "@/store/section";
 import { useRouter } from "vue-router"

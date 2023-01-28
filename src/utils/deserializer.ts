@@ -22,9 +22,10 @@ export class Deserializer<T> {
         return false
     }
 
-    public getField<K>(key: keyof T, defaultValue: K): K {
+    public getField<K>(key: keyof T, defaultValue: K, notRequiredField?: false): K {
         if (!this.document.exists || !this.fieldExists(key)) return defaultValue
         const fieldValue = this.data[key]
+        if (notRequiredField) return fieldValue;
         if (typeof fieldValue != typeof defaultValue) return defaultValue
         return fieldValue
     }

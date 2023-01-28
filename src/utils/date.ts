@@ -24,6 +24,13 @@ export const isValidDate = (date: Date): boolean => {
     return !isNaN(date.getMonth());
 }
 
+export const isTimeStringValid = (string: string): boolean => {
+    const regex = /[0-9]{2}:[0-9]{2}/;
+    if (!regex.test(string)) return false;
+    const [hours, minutes] = string.split(':');
+    return +hours < 24 && +minutes < 60;
+}
+
 export const convertInputStringToDate = (string: string): Date | null => {
     const regex = /[0-9]-[0-9]{2}-[0-9]{2}/;
     if (!regex.test(string)) return null;

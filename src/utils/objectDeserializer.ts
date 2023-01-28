@@ -19,7 +19,7 @@ export class ObjectDeserializer {
     }
 
     public getField<K>(key: string, defaultValue: K): K {
-        if (this.fieldExists(key)) return defaultValue
+        if (!this.fieldExists(key)) return defaultValue
         const fieldValue = this.object[key]
         if (typeof fieldValue != typeof defaultValue) return defaultValue
         return fieldValue
