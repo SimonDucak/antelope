@@ -68,8 +68,7 @@
             </div>
 
             <!-- Range table -->
-            <ARangeTable @update:removed="monthStore.deleteRange($event, sectionId)"
-                :ranges="((monthStore.month?.ranges ?? []) as AntelopeRange[])" />
+            <ARangeTable @update:removed="monthStore.deleteRange($event, sectionId)" :ranges="filteredRanges" />
         </div>
 
         <div v-if="!isRunning && noSection" class="w-100 h-100 d-flex align-center justify-center">
@@ -96,6 +95,7 @@ import UpdateSectionForm from "@/components/AUpsertSectionForm.vue";
 import ASetGoals from "@/components/ASetGoals.vue";
 import { Day, dayOptions } from "@/model/Day";
 import AConfirmModal from "./AConfirmModal.vue";
+import { formatDateForInput } from "@/utils/date";
 
 const { currentRoute, push } = useRouter();
 const monthStore = useMonthStore();
@@ -106,8 +106,8 @@ enum FilterType { ONLY_DAY, MONTH };
 const editSectionModalVisible = ref(false);
 const setGoalsModalVisible = ref(false);
 const deleteConfirmModalVisible = ref(false);
-const filterType = ref<FilterType>(FilterType.ONLY_DAY);
-const { inputValue: selectedDateValue, setDate } = useDateInput(new Date());
+const filterType = ref<FilterType>(FilterType.MONTH);
+const { inputValue: selectedDateValue, setDate, date } = useDateInput(new Date());
 
 const sectionId = computed<string>(() => {
     const sectionId = currentRoute.value?.query?.section
@@ -129,11 +129,19 @@ const goalLabel = computed<string>(() => {
     });
     return `${daysLabels.join(', ')} - ${time}h`;
 });
+const filteredRanges = computed<AntelopeRange[]>(() => {
+    const ranges = (monthStore.month?.ranges ?? []) as AntelopeRange[];
+    if (filterType.value === FilterType.MONTH) return ranges;
+    return ranges.filter((range) => {
+        const rangeStartInputValue = formatDateForInput(range.startDate);
+        return selectedDateValue.value === rangeStartInputValue;
+    });
+});
 
 const { perform, isRunning } = useTask(async () => {
     try {
         if (noSection.value) return;
-        await monthStore.resolveMonth(AntelopeMonth.getMonthId(new Date()), sectionId.value)
+        await monthStore.resolveMonth(AntelopeMonth.getMonthId(date.value), sectionId.value)
     } catch (err) {
         console.log(err);
         alert(err);
@@ -152,5 +160,9 @@ const deleteSection = async () => {
 
 watch(() => currentRoute.value, () => {
     perform();
-}, { deep: true, immediate: true })
+}, { deep: true, immediate: true });
+
+watch(date, (newDate: Date, oldDate: Date) => {
+    if (newDate.getMonth() !== oldDate.getMonth()) perform();
+});
 </script>

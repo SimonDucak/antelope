@@ -52,7 +52,7 @@ const save = () => {
   const sDate = startDate.value;
   clearRenderingCycle();
   if (sDate) {
-    const range = new AntelopeRange(sDate, eDate);
+    const range = new AntelopeRange(sDate.getTime(), eDate.getTime());
     emit('update:value', range);
   }
 }

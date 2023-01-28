@@ -1,3 +1,4 @@
+import { AntelopeMonth } from '@/model/AntelopeMonth';
 import { getSecondsBetweenTwoDates, isValidDate } from "@/utils/date";
 import { formatSecondsToHhmmss } from "@/utils/number";
 import { ObjectDeserializer } from "@/utils/objectDeserializer";
@@ -25,6 +26,8 @@ export class AntelopeRange {
 
     get hhmmss() { return formatSecondsToHhmmss(this.secondsDiff); }
 
+    get monthId() { return AntelopeMonth.getMonthId(this.startDate); }
+
     serialize(): { [key: string]: any } {
         return {
             id: this._id,
@@ -36,19 +39,19 @@ export class AntelopeRange {
     static deserialize(obj: { [key: string]: any }): AntelopeRange {
         const objectDeserializer = new ObjectDeserializer(obj);
         return new AntelopeRange(
-            objectDeserializer.getField<Date>('startDate', new Date()),
-            objectDeserializer.getField<Date>('endDate', new Date()),
+            objectDeserializer.getField<number>('startDate', new Date().getTime()),
+            objectDeserializer.getField<number>('endDate', new Date().getTime()),
             objectDeserializer.getField<string>('id', v1())
         );
     };
 
     static emptyRange(): AntelopeRange {
-        return new AntelopeRange(new Date(), new Date());
+        return new AntelopeRange(new Date().getTime(), new Date().getTime());
     }
 
-    constructor(startDate: Date, endDate: Date, id?: string) {
+    constructor(startDate: number, endDate: number, id?: string) {
         this._id = id ?? v1();
-        this._startDate = startDate.getTime();
-        this._endDate = endDate.getTime();
+        this._startDate = startDate;
+        this._endDate = endDate;
     }
 }

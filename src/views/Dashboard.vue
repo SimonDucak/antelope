@@ -17,16 +17,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
-import { AntelopeRange } from "@/model/AntelopeRange";
+import { onMounted } from "vue"
 import ADrawer from "@/components/ADrawer.vue";
 import { useTask } from "@/composable/use_task";
 import { useSectionStore } from "@/store/section";
 import ALogger from "@/components/ALogger.vue";
 
 const sections = useSectionStore();
-
-const ranges = ref<AntelopeRange[]>([]);
 
 const { perform, isRunning } = useTask(async () => {
   try {
