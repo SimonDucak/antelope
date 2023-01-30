@@ -22,6 +22,7 @@
                 </div>
             </div>
 
+            <!-- Toolbar -->
             <div v-if="foundSection" class="border-b w-100 px-2 py-2 d-flex justify-space-between align-center">
                 <div class="d-flex align-center">
                     <v-btn size="x-small" color="warning" class="mr-2">
@@ -64,7 +65,7 @@
             <!-- Time Range Picker -->
             <div class="time-picker-wrapper border-b w-100 py-10 px-10 d-flex flex-column align-center justify-center"
                 style="min-height: 280px">
-                <ATimeRangePicker @update:value="monthStore.addRange($event, sectionId)" />
+                <ATimeRangePicker @update:value="addRange" />
             </div>
 
             <!-- Range table -->
@@ -156,6 +157,11 @@ const deleteSection = async () => {
     } catch (err) {
         console.log(err);
     }
+}
+
+const addRange = async (range: AntelopeRange) => {
+    if (!foundSection.value) return;
+    monthStore.addRange(range, foundSection.value.id)
 }
 
 watch(() => currentRoute.value, () => {

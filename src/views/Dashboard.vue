@@ -6,7 +6,7 @@
       <ALogger />
 
       <!-- Right side / Charts -->
-      <div class="w-50 h-screen overflow-auto"></div>
+      <ACharts />
     </v-main>
 
     <!-- Is Running -->
@@ -22,12 +22,21 @@ import ADrawer from "@/components/ADrawer.vue";
 import { useTask } from "@/composable/use_task";
 import { useSectionStore } from "@/store/section";
 import ALogger from "@/components/ALogger.vue";
+import { useRouter } from "vue-router";
+import ACharts from "@/components/ACharts.vue"
 
-const sections = useSectionStore();
+const sectionsStore = useSectionStore();
+const { push } = useRouter()
 
 const { perform, isRunning } = useTask(async () => {
   try {
-    await sections.fetchCurrentUserSections();
+    await sectionsStore.fetchCurrentUserSections();
+    if (sectionsStore.sections.length) {
+      push({
+        path: '/dashboard',
+        query: { section: sectionsStore.sections[0].id }
+      })
+    }
   } catch (err) {
     console.log(err);
     alert(err);

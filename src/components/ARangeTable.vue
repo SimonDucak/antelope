@@ -22,6 +22,16 @@
                     <v-btn @click="removeRange(range)" icon="mdi-close" size="x-small" color="error"></v-btn>
                 </td>
             </tr>
+
+            <tr v-if="sortedRanges.length > 1">
+                <td><strong>Total</strong></td>
+                <td></td>
+                <td></td>
+                <td class="text-success">
+                    <strong>{{ totalHhmmss }}</strong>
+                </td>
+                <td></td>
+            </tr>
         </tbody>
     </v-table>
 </template>
@@ -31,6 +41,7 @@ import { AntelopeRange } from "@/model/AntelopeRange";
 import { getTheTrueFortmatOfDate } from "@/utils/date";
 import { PropType, ref, computed } from "vue";
 import ATableHeadSort from "@/components/ATableHeadSort.vue";
+import { formatSecondsToHhmmss } from "@/utils/number";
 
 const emit = defineEmits(['update:removed']);
 
@@ -89,5 +100,14 @@ const sortedRanges = computed<AntelopeRange[]>(() => {
             .sort((rangeA, rangeB) => resolveSort(rangeA.secondsDiff, rangeB.secondsDiff))
     }
     return props.ranges;
+});
+
+const totalHhmmss = computed<string>(() => {
+    const totalSeconds: number = sortedRanges.value
+        .reduce((acc, nextRange) => {
+            acc += nextRange.secondsDiff;
+            return acc;
+        }, 0);
+    return formatSecondsToHhmmss(totalSeconds);
 });
 </script>

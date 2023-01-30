@@ -3,7 +3,7 @@
     <h3 class="text-h3 mb-1">{{ hhmmss }}</h3>
     <p class="text-body-2 mb-3">
       <span v-if="isRunning && startDate">Start from: {{ getTheTrueFortmatOfDate(startDate) }}</span>
-      <span v-else>Start timer by clicking on button below.</span>
+      <span v-else>Start timer by clicking on button below. ({{ getTheTrueFortmatOfDate(new Date(), false) }})</span>
     </p>
     <v-btn v-if="!isRunning" @click="start">Start timer</v-btn>
     <v-btn v-else color="success" @click="save">Save time</v-btn>

@@ -8,12 +8,16 @@
   },
   "dependencies": {
     "@mdi/font": "7.0.96",
+    "@types/lodash": "^4.14.191",
     "@types/uuid": "^9.0.0",
+    "chart.js": "^4.2.0",
     "firebase": "^9.16.0",
+    "lodash": "^4.17.21",
     "pinia": "^2.0.23",
     "roboto-fontface": "*",
     "uuid": "^9.0.0",
     "vue": "^3.2.38",
+    "vue-chart-3": "^3.1.8",
     "vue-router": "^4.0.0",
     "vuetify": "^3.0.0",
     "webfontloader": "^1.0.0"
