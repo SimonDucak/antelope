@@ -26,6 +26,11 @@ export class AntelopeGoal {
         this._days = [...new Set(newDays)];
     }
 
+    get timeInSeconds(): number {
+        const [hours, minutes] = this._time.split(':');
+        return (parseInt(hours) * 3600) + (parseInt(minutes) * 60);
+    }
+
     serialize(): { [key: string]: any } {
         return {
             id: this._id,

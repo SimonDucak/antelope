@@ -68,3 +68,11 @@ export const getSunday = (date: Date) => {
     const diff = date.getDate() - day + (day === 0 ? 0 : 7);
     return new Date(date.setDate(diff));
 }
+
+export const getSecondsFromTimeString = (time: string): number => {
+    if (!isTimeStringValid(time)) return 0;
+    const [hours, minutes] = time.split(':');
+    const hoursInSeconds = +hours * 3600;
+    const minutesInSeconds = +minutes * 60;
+    return hoursInSeconds + minutesInSeconds;
+}

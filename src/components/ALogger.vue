@@ -11,14 +11,8 @@
                 <h4 v-if="foundSection" class="text-h6">{{ foundSection.name }}</h4>
 
                 <div class="d-flex">
-                    <v-text-field :value="selectedDateValue" @update:model-value="setDate" class="mr-2" type="date"
-                        :hide-details="true" density="compact" variant="solo" />
-
-                    <v-select v-model="filterType" :hide-details="true" density="compact" item-title="label"
-                        item-value="value" style="max-width: 180px;" :items="[
-                            { label: 'Only day', value: FilterType.ONLY_DAY },
-                            { label: 'Month', value: FilterType.MONTH },
-                        ]" variant="solo"></v-select>
+                    <v-text-field :value="selectedMonthInputValue" @update:model-value="setMonth" :hide-details="true"
+                        density="compact" variant="solo" type="month" />
                 </div>
             </div>
 
@@ -69,7 +63,8 @@
             </div>
 
             <!-- Range table -->
-            <ARangeTable @update:removed="monthStore.deleteRange($event, sectionId)" :ranges="filteredRanges" />
+            <ARangeTable @update:removed="monthStore.deleteRange($event, sectionId)"
+                :ranges="(monthStore.month?.ranges as AntelopeRange[]) ?? []" />
         </div>
 
         <div v-if="!isRunning && noSection" class="w-100 h-100 d-flex align-center justify-center">
@@ -96,25 +91,30 @@ import UpdateSectionForm from "@/components/AUpsertSectionForm.vue";
 import ASetGoals from "@/components/ASetGoals.vue";
 import { Day, dayOptions } from "@/model/Day";
 import AConfirmModal from "./AConfirmModal.vue";
-import { formatDateForInput } from "@/utils/date";
+import { pad } from "@/utils/number";
 
 const { currentRoute, push } = useRouter();
 const monthStore = useMonthStore();
 const sectionStore = useSectionStore();
 
-enum FilterType { ONLY_DAY, MONTH };
-
-const editSectionModalVisible = ref(false);
-const setGoalsModalVisible = ref(false);
-const deleteConfirmModalVisible = ref(false);
-const filterType = ref<FilterType>(FilterType.MONTH);
-const { inputValue: selectedDateValue, setDate, date } = useDateInput(new Date());
+const editSectionModalVisible = ref<boolean>(false);
+const setGoalsModalVisible = ref<boolean>(false);
+const deleteConfirmModalVisible = ref<boolean>(false);
 
 const sectionId = computed<string>(() => {
     const sectionId = currentRoute.value?.query?.section
     if (!sectionId || typeof sectionId !== 'string') return '';
     return sectionId
 });
+const monthId = computed<string>(() => {
+    const { month } = currentRoute.value.query;
+    if (!month || typeof month !== 'string') return AntelopeMonth.getMonthId(new Date());
+    return month;
+});
+const selectedMonthInputValue = computed<string>(() => {
+    const date = AntelopeMonth.getDateFromMonthId(monthId.value);
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}`;
+})
 const noSection = computed<boolean>(() => !sectionId.value.length);
 const foundSection = computed<AntelopeSection | undefined>(() => sectionStore.sections
     .find(s => s.id === sectionId.value) as AntelopeSection | undefined);
@@ -130,19 +130,11 @@ const goalLabel = computed<string>(() => {
     });
     return `${daysLabels.join(', ')} - ${time}h`;
 });
-const filteredRanges = computed<AntelopeRange[]>(() => {
-    const ranges = (monthStore.month?.ranges ?? []) as AntelopeRange[];
-    if (filterType.value === FilterType.MONTH) return ranges;
-    return ranges.filter((range) => {
-        const rangeStartInputValue = formatDateForInput(range.startDate);
-        return selectedDateValue.value === rangeStartInputValue;
-    });
-});
 
 const { perform, isRunning } = useTask(async () => {
     try {
         if (noSection.value) return;
-        await monthStore.resolveMonth(AntelopeMonth.getMonthId(date.value), sectionId.value)
+        await monthStore.resolveMonth(monthId.value, sectionId.value)
     } catch (err) {
         console.log(err);
         alert(err);
@@ -164,11 +156,21 @@ const addRange = async (range: AntelopeRange) => {
     monthStore.addRange(range, foundSection.value.id)
 }
 
+const setMonth = (value: string) => {
+    const reg = /[0-9]{4}-[0-9]{2}/;
+    if (!reg.test(value)) return;
+    const [year, month] = value.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    push({
+        path: `/dashboard`,
+        query: {
+            section: sectionId.value,
+            month: AntelopeMonth.getMonthId(date)
+        }
+    });
+}
+
 watch(() => currentRoute.value, () => {
     perform();
 }, { deep: true, immediate: true });
-
-watch(date, (newDate: Date, oldDate: Date) => {
-    if (newDate.getMonth() !== oldDate.getMonth()) perform();
-});
 </script>

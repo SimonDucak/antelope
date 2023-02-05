@@ -6,7 +6,7 @@
       <ALogger />
 
       <!-- Right side / Charts -->
-      <ACharts />
+      <AChart />
     </v-main>
 
     <!-- Is Running -->
@@ -23,7 +23,8 @@ import { useTask } from "@/composable/use_task";
 import { useSectionStore } from "@/store/section";
 import ALogger from "@/components/ALogger.vue";
 import { useRouter } from "vue-router";
-import ACharts from "@/components/ACharts.vue"
+import AChart from "@/components/AChart.vue"
+import { AntelopeMonth } from "@/model/AntelopeMonth";
 
 const sectionsStore = useSectionStore();
 const { push } = useRouter()
@@ -34,7 +35,10 @@ const { perform, isRunning } = useTask(async () => {
     if (sectionsStore.sections.length) {
       push({
         path: '/dashboard',
-        query: { section: sectionsStore.sections[0].id }
+        query: {
+          section: sectionsStore.sections[0].id,
+          month: AntelopeMonth.getMonthId(new Date())
+        }
       })
     }
   } catch (err) {

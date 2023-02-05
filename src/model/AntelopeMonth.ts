@@ -36,6 +36,12 @@ export class AntelopeMonth {
         return `${month}${date.getFullYear()}`;
     }
 
+    static getDateFromMonthId(id: string): Date {
+        const month = parseInt(id.substring(0, 2));
+        const year = parseInt(id.substring(2));
+        return new Date(year, month - 1);
+    }
+
     static emptyMonth(id: string): AntelopeMonth {
         return new AntelopeMonth([], id);
     }

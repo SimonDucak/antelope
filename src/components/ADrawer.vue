@@ -44,6 +44,7 @@ import { useAuth } from "@/composable/use_auth";
 import { useSectionStore } from "@/store/section";
 import { useRouter } from "vue-router"
 import { AntelopeSection } from "@/model/AntelopeSection";
+import { AntelopeMonth } from "@/model/AntelopeMonth";
 
 const sections = useSectionStore();
 const { signOut } = useAuth();
@@ -52,7 +53,12 @@ const { push, currentRoute } = useRouter();
 const modalVisible = ref<boolean>(false);
 
 const openSection = (section: AntelopeSection) => {
-    push({ path: '/dashboard', query: { section: section.id } });
+    push({
+        path: '/dashboard', query: {
+            section: section.id,
+            month: AntelopeMonth.getMonthId(new Date())
+        }
+    });
 } 
 </script>
 
