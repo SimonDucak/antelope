@@ -9,6 +9,18 @@
       <AChart />
     </v-main>
 
+    <div class="fucked-time">
+      <p class="text-body-2">
+        Dnešný prejebaný čas = {{ formatSecondsToHhmmss(fuckedTimeInSeconds) }}
+        <u style="cursor: pointer" class="text-body-2 text-success">
+          more details
+          <v-dialog transition="dialog-bottom-transition" v-model="modalVisible" activator="parent">
+            <AFuckTimeChart v-model:visible="modalVisible" :times="times" />
+          </v-dialog>
+        </u>
+      </p>
+    </div>
+
     <!-- Is Running -->
     <div v-if="isRunning" class="progress-bar">
       <v-progress-linear indeterminate color="success"></v-progress-linear>
@@ -17,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue"
+import { onMounted, ref } from "vue"
 import ADrawer from "@/components/ADrawer.vue";
 import { useTask } from "@/composable/use_task";
 import { useSectionStore } from "@/store/section";
@@ -25,9 +37,17 @@ import ALogger from "@/components/ALogger.vue";
 import { useRouter } from "vue-router";
 import AChart from "@/components/AChart.vue"
 import { AntelopeMonth } from "@/model/AntelopeMonth";
+import { useFuckTime } from "@/composable/use_fuck_time";
+import { formatSecondsToHhmmss } from '@/utils/number';
+import AFuckTimeChart from '@/components/AFuckTimeChart.vue';
 
 const sectionsStore = useSectionStore();
-const { push } = useRouter()
+const { push } = useRouter();
+
+const today = ref(new Date());
+const modalVisible = ref(false);
+
+const { fuckedTimeInSeconds, times } = useFuckTime(today);
 
 const { perform, isRunning } = useTask(async () => {
   try {
@@ -57,5 +77,14 @@ onMounted(() => { perform(); })
   left: 0;
   width: 100vw;
   z-index: 9999;
+}
+
+.fucked-time {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9999;
+  padding: 3px 12px;
+  background-color: black;
 }
 </style>
