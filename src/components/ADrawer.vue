@@ -1,12 +1,14 @@
 <template>
     <v-navigation-drawer expand-on-hover rail>
-        <v-list>
+        <v-list v-if="currentUser?.email">
             <v-list-item :active="false">
                 <div class="d-flex align-center">
                     <v-avatar color="info mr-2">
-                        <span class="text-body-2">SD</span>
+                        <span class="text-body-2">
+                            {{ currentUser.email[0] || '?' }}
+                        </span>
                     </v-avatar>
-                    <p class="text-body-2">s.ducak@gmail.com</p>
+                    <p class="text-body-2">{{ currentUser.email }}</p>
                 </div>
             </v-list-item>
         </v-list>
@@ -47,7 +49,7 @@ import { AntelopeSection } from "@/model/AntelopeSection";
 import { AntelopeMonth } from "@/model/AntelopeMonth";
 
 const sections = useSectionStore();
-const { signOut } = useAuth();
+const { signOut, currentUser } = useAuth();
 const { push, currentRoute } = useRouter();
 
 const modalVisible = ref<boolean>(false);
